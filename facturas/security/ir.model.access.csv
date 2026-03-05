@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_facturas_factura_user,access_facturas_factura_user,model_facturas_factura,base.group_user,1,1,1,1
+access_facturas_factura_linea_user,access_facturas_factura_linea_user,model_facturas_factura_linea,base.group_user,1,1,1,1

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ===================== VISTA ÁRBOL (LISTA) ===================== -->
+        <record id="facturas_factura_tree_view" model="ir.ui.view">
+            <field name="name">facturas.factura.tree</field>
+            <field name="model">facturas.factura</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="id" />
+                    <field name="cliente_id" />
+                    <field name="fecha" />
+                    <field name="cantidad_lineas" />
+                    <field name="total" />
+                    <field name="estado" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- ===================== VISTA FORMULARIO ===================== -->
+        <record id="facturas_factura_form_view" model="ir.ui.view">
+            <field name="name">facturas.factura.form</field>
+            <field name="model">facturas.factura</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_confirmar" type="object" string="Confirmar" class="btn-primary" states="borrador"/>
+                        <button name="action_cancelar" type="object" string="Cancelar" class="btn-danger" states="borrador,confirmada"/>
+                        <field name="estado" widget="statusbar" options="{'clickable': False}" />
+                    </header>
+                    <sheet>
+                        <!-- Sección superior con cliente y fecha -->
+                        <div class="oe_title">
+                            <h1>Factura</h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="cliente_id" options="{'no_create_edit': False}" />
+                                <field name="fecha" />
+                            </group>
+                            <group>
+                                <field name="cantidad_lineas" />
+                                <field name="total" />
+                            </group>
+                        </group>
+
+                        <!-- Sección de líneas de factura -->
+                        <notebook>
+                            <page string="Líneas de Factura">
+                                <field name="lineas_ids" mode="tree,kanban">
+                                    <tree editable="bottom">
+                                        <field name="sequence" widget="handle" />
+                                        <field name="producto_id" required="1" />
+                                        <field name="descripcion" />
+                                        <field name="cantidad" required="1" />
+                                        <field name="precio" required="1" />
+                                        <field name="subtotal" readonly="1" />
+                                    </tree>
+                                    <kanban>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div class="oe_kanban_card">
+                                                    <div>
+                                                        <strong t-esc="record.producto_id.value" />
+                                                    </div>
+                                                    <div>
+                                                        Cantidad: <t t-esc="record.cantidad.value" />
+                                                    </div>
+                                                    <div>
+                                                        Precio: <t t-esc="record.precio.value" />
+                                                    </div>
+                                                    <div>
+                                                        Subtotal: <t t-esc="record.subtotal.value" />
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ===================== VISTA BÚSQUEDA ===================== -->
+        <record id="facturas_factura_search_view" model="ir.ui.view">
+            <field name="name">facturas.factura.search</field>
+            <field name="model">facturas.factura</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="cliente_id" />
+                    <field name="fecha" />
+                    <field name="estado" />
+                    <separator />
+                    <filter name="borrador" string="Borradores" domain="[('estado', '=', 'borrador')]" />
+                    <filter name="confirmada" string="Confirmadas" domain="[('estado', '=', 'confirmada')]" />
+                    <filter name="cancelada" string="Canceladas" domain="[('estado', '=', 'cancelada')]" />
+                    <separator />
+                    <filter name="filter_fecha_hoy" string="Hoy" domain="[('fecha', '=', context_today().strftime('%Y-%m-%d'))]" />
+                    <filter name="filter_fecha_mes" string="Este mes" domain="[('fecha', '&gt;=', context_today().replace(day=1)), ('fecha', '&lt;=', context_today())]" />
+                    <group expand="0" string="Agrupar por">
+                        <filter name="group_cliente" string="Cliente" context="{'group_by': 'cliente_id'}" />
+                        <filter name="group_estado" string="Estado" context="{'group_by': 'estado'}" />
+                        <filter name="group_fecha" string="Fecha" context="{'group_by': 'fecha'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- ===================== ACCIÓN ===================== -->
+        <record id="facturas_factura_action" model="ir.actions.act_window">
+            <field name="name">Facturas</field>
+            <field name="res_model">facturas.factura</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('facturas_factura_tree_view')}), (0, 0, {'view_mode': 'form', 'view_id': ref('facturas_factura_form_view')})]" />
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crea tu primera factura
+                </p>
+                <p>
+                    El módulo de facturación te permite crear y gestionar facturas de forma sencilla.
+                    Selecciona un cliente, agrega productos y genera tu factura.
+                </p>
+            </field>
+        </record>
+
+        <!-- ===================== MENÚ ===================== -->
+        <menuitem
+            id="facturas_menu_root"
+            name="Facturación"
+            sequence="1"
+            web_icon="facturas,static/description/icon.png" />
+
+        <menuitem
+            id="facturas_menu_facturas"
+            name="Facturas"
+            parent="facturas_menu_root"
+            action="facturas_factura_action"
+            sequence="1" />
+
+    </data>
+</odoo>
