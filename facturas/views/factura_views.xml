@@ -45,7 +45,7 @@
 
                         <notebook>
                             <page string="Líneas de Factura">
-                                <field name="lineas_ids" mode="tree,kanban">
+                                <field name="lineas_ids">
                                     <tree editable="bottom">
                                         <field name="sequence" widget="handle" />
                                         <field name="producto_id" required="1" />
@@ -54,26 +54,6 @@
                                         <field name="precio" required="1" />
                                         <field name="subtotal" readonly="1" />
                                     </tree>
-                                    <kanban>
-                                        <templates>
-                                            <t t-name="kanban-box">
-                                                <div class="oe_kanban_card">
-                                                    <div>
-                                                        <strong t-esc="record.producto_id.value" />
-                                                    </div>
-                                                    <div>
-                                                        Cantidad: <t t-esc="record.cantidad.value" />
-                                                    </div>
-                                                    <div>
-                                                        Precio: <t t-esc="record.precio.value" />
-                                                    </div>
-                                                    <div>
-                                                        Subtotal: <t t-esc="record.subtotal.value" />
-                                                    </div>
-                                                </div>
-                                            </t>
-                                        </templates>
-                                    </kanban>
                                 </field>
                             </page>
                         </notebook>
@@ -128,8 +108,7 @@
         <menuitem
             id="facturas_menu_root"
             name="Facturación"
-            sequence="1"
-            web_icon="facturas,static/description/icon.png" />
+            sequence="1" />
 
         <menuitem
             id="facturas_menu_facturas"
